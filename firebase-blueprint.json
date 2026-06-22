@@ -1,0 +1,82 @@
+{
+  "entities": {
+    "campaignLedger": {
+      "title": "Campaign Ledger Entry",
+      "description": "Represents a single campaign performance row in the ledger.",
+      "type": "object",
+      "properties": {
+        "offerId": {
+          "type": "string",
+          "description": "The unique ID for the offer."
+        },
+        "offerName": {
+          "type": "string",
+          "description": "The human-readable name for the offer."
+        },
+        "creativeImage": {
+          "type": "string",
+          "description": "Base64 string of the newsletter/creative screenshot."
+        },
+        "sourceData": {
+          "type": "string",
+          "description": "The green/blue active box in Mixing Panel (Source Segment)."
+        },
+        "targetMix": {
+          "type": "string",
+          "description": "The target Mixing List dropdown name."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category/vertical of the offer."
+        },
+        "listDateRange": {
+          "type": "string",
+          "description": "The data range string (e.g. 01 => 12 / 2025)."
+        },
+        "dataType": {
+          "type": "string",
+          "enum": ["Open", "Click", "Unsub", "None"],
+          "description": "The data type: Open, Click, or Unsub."
+        },
+        "revenue": {
+          "type": "number",
+          "description": "The total revenue generated."
+        },
+        "length": {
+          "type": "number",
+          "description": "The volume or sent amount (Length)."
+        },
+        "createdDate": {
+          "type": "string",
+          "format": "date",
+          "description": "The execution date in YYYY-MM-DD format."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the record was actually created in the system."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the record was last updated."
+        },
+        "timestamp_created": {
+          "type": "string",
+          "description": "Historical creation timestamp for sorting (YYYY-MM-DD HH:mm:ss)."
+        },
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who owns this record."
+        }
+      },
+      "required": ["offerId", "targetMix", "createdDate", "userId"]
+    }
+  },
+  "firestore": {
+    "/ledger/{entryId}": {
+      "schema": "campaignLedger",
+      "description": "Collection of all campaign ledger entries."
+    }
+  }
+}

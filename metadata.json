@@ -1,0 +1,5 @@
+{
+  "name": "Inbox Data & Deliverability Suite",
+  "description": "A dual-phase tool for DNS/IP parsing and professional email sanitization and header generation for inbox testing.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Ledger Rules
+    match /ledger/{entryId} {
+      function isValidLedger(data) {
+        return (data.get('offerId', '') is string && data.get('offerId', '').size() <= 100) &&
+               (data.get('offerName', '') is string && data.get('offerName', '').size() <= 200) &&
+               (data.get('sourceData', '') is string && data.get('sourceData', '').size() <= 200) &&
+               (data.get('targetMix', '') is string && data.get('targetMix', '').size() <= 200) &&
+               (data.get('category', '') is string && data.get('category', '').size() <= 100) &&
+               (data.get('listDateRange', '') is string && data.get('listDateRange', '').size() <= 100) &&
+               (data.get('dataType', '') is string && data.get('dataType', '').size() <= 50) &&
+               (data.get('revenue', 0) is number) &&
+               (data.get('length', 0) is number) &&
+               (data.get('createdDate', '') is string && data.get('createdDate', '').size() <= 20) &&
+               (data.get('userId', '') == request.auth.uid);
+      }
+
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+
+      allow create: if isSignedIn() &&
+                      isValidLedger(request.resource.data) &&
+                      request.resource.data.createdAt == request.time &&
+                      request.resource.data.updatedAt == request.time;
+
+      allow update: if isSignedIn() &&
+                      resource.data.userId == request.auth.uid &&
+                      isValidLedger(request.resource.data) &&
+                      request.resource.data.userId == resource.data.userId &&
+                      request.resource.data.createdAt == resource.data.createdAt &&
+                      request.resource.data.updatedAt == request.time &&
+                      request.resource.data.diff(resource.data).affectedKeys()
+                        .hasOnly(['offerId', 'offerName', 'sourceData', 'targetMix', 'category', 'revenue', 'length', 'updatedAt', 'creativeImage', 'listDateRange', 'dataType', 'timestamp_created']);
+
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

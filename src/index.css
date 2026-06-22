@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-scan: scan 10s linear infinite;
+  --animate-pulse-subtle: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  @keyframes scan {
+    from { transform: translateY(-50%); }
+    to { transform: translateY(0%); }
+  }
+  @keyframes pulse-subtle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+}
